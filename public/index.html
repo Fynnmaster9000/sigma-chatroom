@@ -1,0 +1,45 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simple Chatroom</title>
+  <style>
+    body { font-family: Arial; background: #121212; color: #fff; display: flex; flex-direction: column; height: 100vh; margin: 0; }
+    #chat { flex: 1; padding: 10px; overflow-y: auto; border-bottom: 1px solid #444; }
+    #form { display: flex; }
+    #input { flex: 1; padding: 10px; border: none; outline: none; }
+    #send { padding: 10px; background: #333; color: white; border: none; cursor: pointer; }
+    #send:hover { background: #444; }
+  </style>
+</head>
+<body>
+  <div id="chat"></div>
+  <form id="form">
+    <input id="input" autocomplete="off" placeholder="Type your message..." />
+    <button id="send" type="submit">Send</button>
+  </form>
+
+  <script>
+    const ws = new WebSocket("ws://localhost:3000");
+    const chat = document.getElementById("chat");
+    const form = document.getElementById("form");
+    const input = document.getElementById("input");
+
+    ws.onmessage = (event) => {
+      const msg = document.createElement("div");
+      msg.textContent = event.data;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    };
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (input.value) {
+        ws.send(input.value);
+        input.value = "";
+      }
+    });
+  </script>
+</body>
+</html>
